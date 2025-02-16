@@ -1,0 +1,22 @@
+this is a simple sentence. it ends with a period.
+this sentence ends with an exclamation mark! and this one with a question mark?
+this is a multi-line sentence
+that continues here. it should not capitalize the second line.
+
+this is another sentence.  
+   it starts with spaces after a period.
+
+this line contains a number: 3.14. it should not capitalize after the decimal point.
+this line contains an abbreviation: u.s.a. it should not capitalize after the periods.
+this line ends with a number: 123. next sentence starts here.
+
+this is a sentence with multiple spaces after the period.    next sentence starts here.
+
+this is a sentence with a newline after the period.
+next sentence starts here.
+
+this is a sentence with a tab after the period.	next sentence starts here.
+
+this is a sentence with no space after the period.next sentence starts here.
+
+this is a sentence with a number and a letter after the period: 3.14a. it should not capitalize the 'a'.
