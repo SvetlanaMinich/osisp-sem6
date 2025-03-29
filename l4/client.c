@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
 
     char client_fifo[32];
     snprintf(client_fifo, sizeof(client_fifo), "/tmp/client_%d", getpid());
-    if (mkfifo(client_fifo, 0666) == -1 && errno != EEXIST) {
+    if (mkfifo(client_fifo, 0666) == -1) {
         perror("Error creating client FIFO");
         exit(1);
     }
@@ -29,7 +29,12 @@ int main(int argc, char *argv[]) {
         perror("Error opening REQUEST_FIFO");
         exit(1);
     }
-    write(request_fd, request, strlen(request) + 1);
+    ssize_t bytes_written = write(request_fd, request, strlen(request) + 1);
+    if (bytes_written == -1) {
+        perror("Error writing to request FIFO");
+        close(request_fd);
+        exit(1);
+    }
     close(request_fd);
 
     int response_fd = open(client_fifo, O_RDONLY);
@@ -38,7 +43,13 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
     char response[32];
-    read(response_fd, response, sizeof(response));
+    ssize_t bytes_read = read(response_fd, response, sizeof(response) - 1);
+    if (bytes_read == -1) {
+        perror("Error reading response");
+        close(response_fd);
+        exit(1);
+    }
+    response[bytes_read] = '\0';
     printf("Server response: %s\n", response);
     close(response_fd);
 

@@ -52,7 +52,12 @@ void handle_request(const char *request, const char *client_fifo) {
         perror("Error opening client FIFO");
         return;
     }
-    write(fd, response, strlen(response) + 1);
+    ssize_t bytes_written = write(fd, response, strlen(response) + 1);
+    if (bytes_written == -1) {
+        perror("Error writing to client FIFO");
+        close(fd);
+        return;
+    }
     close(fd);
 
     snprintf(log_buf, sizeof(log_buf), "End processing request from client: %s (PID: %d), response: %s", request, getpid(), response);
@@ -72,7 +77,7 @@ int main() {
     // ENOSPC   -> No space left on device
     // ENOTDIR  -> Component of path not a directory
 
-    if (mkfifo(REQUEST_FIFO, 0666) == -1 && errno != EEXIST) {
+    if (mkfifo(REQUEST_FIFO, 0666) == -1) {
         perror("Error creating REQUEST_FIFO");
         exit(1);
     }
@@ -88,7 +93,13 @@ int main() {
 
         // Read request: format "client_fifo:message"
         char buffer[256] = {0};
-        read(request_fd, buffer, sizeof(buffer));
+        ssize_t bytes_read = read(request_fd, buffer, sizeof(buffer) - 1);
+        if (bytes_read == -1) {
+            perror("Error reading from REQUEST_FIFO");
+            close(request_fd);
+            continue;
+        }
+        buffer[bytes_read] = '\0';
         close(request_fd);
 
         if (strlen(buffer) == 0) continue;  // Empty request - skip

@@ -17,6 +17,12 @@ run-server:
 	./server &
 
 run-client:
-	./client "Text msg"
+	./client "Test text msg"
+
+run-clients:
+	for i in 1 2 3 4; do \
+		./client "Client $$i" & \
+	done; \
+	wait;
 
 .PHONY: all clean run-server run-client
