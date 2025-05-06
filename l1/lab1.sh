@@ -17,14 +17,14 @@ function walk_through_cur_dir() {
             if [[ $relative_filename == $parameter_to_search* ]] 
             then
                 relative_path="./${p#$start_dir/}"
-                echo "$relative_path"
+                echo "   $relative_path"
 
                 first_line=$(head -n 1 "$p")
                 if [[ "$first_line" == "$header_string" ]]
                 then
-                    echo "---- File: $relative_path ----"
+                    echo "   ---- File: $relative_path ----"
                     nl "$p"
-                    echo "------------------------------"
+                    echo "   ------------------------------"
                 fi
             fi
         fi
@@ -35,16 +35,16 @@ function walk_through_cur_dir() {
 # $0 - sh script name, $1 - header to search, $2-... - filename(s)
 if [ $# -lt 1 ]
 then
-    echo "No parameters are provided."
+    echo "   No parameters are provided."
 elif [ $# -lt 2 ]
 then
-    echo "No search filename parameter is provided."
+    echo "   No search filename parameter is provided."
 else
     header=$1 
     shift        # Сдвигаем аргументы, чтобы $2, $3, ... стали $1, $2, ...
     for parameter in $@
     do
-        echo "------- PARAMETER: $parameter -------"
+        echo "   ------- PARAMETER: $parameter -------"
         walk_through_cur_dir $start_dir $parameter "$header"
     done
 fi
